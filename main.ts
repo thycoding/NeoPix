@@ -54,7 +54,7 @@ namespace NeoPix {
             for (let Xpos = this.Width; Xpos > -6 * text.length; Xpos--) {//for loop to scroll across the entire matrix
                 for (let letter = 0; letter < text.length; letter++) {//for loop to retrieve all the letters from the text
                     let bitmap = getLettermap(text.charAt(letter))
-                    this.drawBitmap(bitmap, Xpos + (6 * letter), yoffset, 7, 8, colour)
+                    drawBitmap(bitmap, Xpos + (6 * letter), yoffset, 7, 8, colour)
                 }
                 this.strip.show();
                 basic.pause(2000 / speed);
