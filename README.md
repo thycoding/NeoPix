@@ -1,4 +1,4 @@
-# NeoPel
+# NeoPix
 
 This NeoPix extension is modified from SmartMatrix. It can show text animation and graphics on neopixel matrix panel.
 
