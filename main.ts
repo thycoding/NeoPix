@@ -64,16 +64,16 @@ namespace NeoPix {
     /**
      * Create a new matrix object
      * @param pin the pin to which the matrix is connected
-     * @param matrixWidth the amount of leds horizontally
-     * @param matrixHeight the amount of leds vertically
+     * @param Width the amount of leds horizontally
+     * @param Height the amount of leds vertically
      * @param mode the format/type of the LED
      */
-    //%blockId="Matrix_Create" block="Matrix at pin %pin|with a width of %matrixWidth|height of %matrixheight| and with %mode pixeltype"
+    //%blockId="Matrix_Create" block="Matrix at pin %pin|with a width of %Width|height of %height| and with %mode pixeltype"
     //%weight=100 blockGap=8 group="Setup"
     //%parts="NeoPix"
-    //%matrixWidth.defl=32 matrixHeight.defl=8
+    //%Width.defl=32 Height.defl=8
     //%blockSetVariable=matrix
-    export function create(pin: DigitalPin, matrixWidth: number, matrixHeight: number, mode: NeoPixelMode): Matrix {
+    export function create(pin: DigitalPin, Width: number, Height: number, mode: NeoPixelMode): Matrix {
         let matrix = new Matrix;
         matrix.strip = neopixel.create(pin, Height * Width, mode);
         matrix.Width = Width;
