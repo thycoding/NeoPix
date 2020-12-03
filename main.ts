@@ -47,7 +47,7 @@ namespace NeoPix {
         //%colour.shadow=neopixel_colors
         //%speed.min=1 speed.max=1024 speed.defl=512
         scrollText(text: string, speed: number, yoffset:number, colour: number): void {
-            this.strip.clear();
+            strip.clear();
             for (let Xpos = Width; Xpos > -6 * text.length; Xpos--) {//for loop to scroll across the entire matrix
                 for (let letter = 0; letter < text.length; letter++) {//for loop to retrieve all the letters from the text
                     let bitmap = getLettermap(text.charAt(letter))
@@ -75,9 +75,9 @@ namespace NeoPix {
     //%blockSetVariable=matrix
     export function create(pin: DigitalPin, matrixWidth: number, matrixHeight: number, mode: NeoPixelMode): Matrix {
         let matrix = new Matrix;
-        matrix.strip = neopixel.create(pin, matrixHeight * matrixWidth, mode);
-        matrix.Width = matrixWidth;
-        matrix.Height = matrixHeight;
+        matrix.strip = neopixel.create(pin, Height * Width, mode);
+        matrix.Width = Width;
+        matrix.Height = Height;
 
         return matrix;
     }
