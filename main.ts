@@ -61,22 +61,7 @@ namespace NeoPix {
                 this.strip.clear();
             }
         }
-        //%blockId="Matrix_drawBitmap" block="%matrix draw bitmap %bitmap| at x %x y %y| with width %width height %height| in colour %colour"
-        //%weight=70 group="PixelControl"
-        //% colour.shadow=neopixel.colors
-		//% advanced=true
-        drawBitmap(bitmap: number[], x: number, y: number, width: number, height: number, colour: number, direction:number=1): void {
-            for(let Ypos=0; Ypos<height; Ypos++){
-                 for(let bitmask=0; bitmask<width; bitmask++){
-                     if(bitmap[Ypos] & 0x0001<<bitmask){
-                        if(direction){ 
-                           this.setPixel(x+width-bitmask, y+Ypos, colour)
-                        }
-                        else this.setPixel(x+bitmask, y+Ypos, colour)
-                     }
-                    }
-                }
-        }
+
     }
 
     /**
@@ -99,6 +84,25 @@ namespace NeoPix {
 
         return matrix;
     }
+
+    //%blockId="Matrix_drawBitmap" block="%matrix draw bitmap %bitmap| at x %x y %y| with width %width height %height| in colour %colour"
+    //%weight=70 group="PixelControl"
+    //% colour.shadow=neopixel.colors
+	//% advanced=true
+    export function drawBitmap(bitmap: number[], x: number, y: number, width: number, height: number, colour: number, direction:number=1): void {
+		let matrix = new Matrix;
+        for(let Ypos=0; Ypos<height; Ypos++){
+             for(let bitmask=0; bitmask<width; bitmask++){
+                 if(bitmap[Ypos] & 0x0001<<bitmask){
+                    if(direction){ 
+                       matrix.setPixel(x+width-bitmask, y+Ypos, colour)
+                    }
+                    else matrix.setPixel(x+bitmask, y+Ypos, colour)
+                    }
+             }
+        }
+    }	
+	
     //Take in a string-character and return a bitmap to draw on the display
     export function getLettermap(char: string): number[] {
         let letterMap: number[] = [0, 0, 0, 0, 0, 0, 0, 0]
