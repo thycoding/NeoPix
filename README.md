@@ -12,4 +12,4 @@ This NeoPix extension is modified from SmartMatrix. It can show text animation a
 
 ## License
 
-MIT ==
+MIT
