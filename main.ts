@@ -2,15 +2,6 @@
 * NeoPix
 */
 
-
-enum drawDirection{
-    //% block=Normal
-    normal=1,
-    //% block=Mirrored
-    mirrored=0
-}
-
-
 //% color=#019b9b weight=6 icon="\uf121" block="NeoPix"
 //% groups=["Setup", "Tools", "PixelControl"]
 namespace NeoPix {
@@ -21,38 +12,24 @@ namespace NeoPix {
         strip: neopixel.Strip
         Width: number
         Height: number
-        /**
-         * Push all changes made to the framebuffer to the display
-         */
+
         //%blockId="Matrix_show" block="%matrix| show"
         //%weight=90 group="Tools"
         show(): void {
             this.strip.show();
         }
-        /**
-         * Set the brightness of the LEDs
-         * @param setpoint -the brightness setpoint, on a scale from 0-255
-         */		
         //%blockId="Matrix_Brighness" block="%matrix set brightness to %setpoint"
         //%weight=80 group="Setup"
         //%setpoint.defl=32
         Brightness(setpoint: number): void {
             this.strip.setBrightness(setpoint);
         }
-        /**
-         * Empty the entire framebuffer, a call to "show()" must be made to made changes visible
-         */		
         //%blockId="Matrix_clear" block="clear %matrix"
         //%weight=80 group="Tools"
         clear(): void {
             this.strip.clear();
         }
-        /**
-         * Set a single pixel on the display to a specific colour
-         * @param x - the position on the x-axis (left is 0)
-         * @param y - the position on the y-axis (top is 0)
-         * @param colour - the colour to set the pixel to
-         */
+
         //%blockId="Matrix_setPixel" block="%matrix| set pixel at x %x| y %y| to colour %colour"
         //%weight=80 group="PixelControl"
         //%colour.shadow=neopixel_colors
@@ -84,35 +61,21 @@ namespace NeoPix {
                 this.strip.clear();
             }
         }
-        /**
-         * draw a monochrome bitmap on the matrix
-         * a '1' will be set to the selected colour, a '0' will be ignored, allowing the bitmaps to be layered
-         * @param bitmap -the bitmap array to display
-         * @param x -the postition on the x-axis (left is 0)
-         * @param y -the position on the y-axis (top is 0)
-         * @param width -the width of the bitmap
-         * @param height -the height of the bitmap
-         * @param colour -the colour to display the bitmap in
-         * @param direction -set this to 0 to mirror the image
-         */		
-        //% blockId="Matrix_drawBitmap" block="%matrix draw bitmap %bitmap at x %x y %y| with width %width height %height in colour %colour| draw direction %direction"		
+        //%blockId="Matrix_drawBitmap" block="%matrix draw bitmap %bitmap| at x %x y %y| with width %width height %height| in colour %colour"
         //%weight=70 group="PixelControl"
         //% colour.shadow=neopixel.colors
 		//% advanced=true
-        drawBitmap(bitmap: number[], x: number, y: number, width: number, height: number, colour: number, direction:drawDirection=drawDirection.normal): void {
-            let byteInLine = (width+7)/8 //The amount of bytes per horizontal line in the bitmap
+        drawBitmap(bitmap: number[], x: number, y: number, width: number, height: number, colour: number, direction:number=1): void {
             for(let Ypos=0; Ypos<height; Ypos++){
-                for(let hzScan=0; hzScan<byteInLine; hzScan++){
-                    for(let bitmask=0; bitmask<8; bitmask++){
-                        if(bitmap[(Ypos*byteInLine)+hzScan] & 0x01<<bitmask){
-                            if(direction){ 
-                                this.setPixel(x+width-bitmask, y+Ypos, colour)
-                            }
-                            else this.setPixel(x+bitmask, y+Ypos, colour)
+                 for(let bitmask=0; bitmask<width; bitmask++){
+                     if(bitmap[Ypos] & 0x0001<<bitmask){
+                        if(direction){ 
+                           this.setPixel(x+width-bitmask, y+Ypos, colour)
                         }
+                        else this.setPixel(x+bitmask, y+Ypos, colour)
+                     }
                     }
                 }
-            }
         }
     }
 
@@ -136,9 +99,6 @@ namespace NeoPix {
 
         return matrix;
     }
-    /**
-     * Take in a string-character and return a bitmap to draw on the display
-     */	
     //Take in a string-character and return a bitmap to draw on the display
     export function getLettermap(char: string): number[] {
         let letterMap: number[] = [0, 0, 0, 0, 0, 0, 0, 0]
