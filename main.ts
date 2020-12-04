@@ -95,7 +95,7 @@ namespace NeoPix {
          * @param colour -the colour to display the bitmap in
          * @param direction -set this to 0 to mirror the image
          */		
-        //% blockId="Matrix_drawBitmap" block="%matrix draw bitmap %bitmap at x %x y %y| with width %width height %height in colour %colour| draw direction &direction"		
+        //% blockId="Matrix_drawBitmap" block="%matrix draw bitmap %bitmap at x %x y %y| with width %width height %height in colour %colour| draw direction %direction"		
         //%weight=70 group="PixelControl"
         //% colour.shadow=neopixel.colors
 		//% advanced=true
