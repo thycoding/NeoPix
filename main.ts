@@ -58,8 +58,10 @@ namespace NeoPix {
                 }
                 this.strip.show();
                 basic.pause(2000 / speed);
-                this.strip.clear();
+                this.strip.clear();	
             }
+            this.strip.clear();
+            this.strip.show();				
         }
         //%blockId="Matrix_drawBitmap" block="%matrix draw bitmap %bitmap| at x %x y %y| with width %width height %height| in colour %colour"
         //%weight=70 group="PixelControl"
