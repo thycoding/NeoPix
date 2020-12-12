@@ -2,16 +2,9 @@
 * NeoPix
 */
 
-enum drawDirection{
-    //% block="Normal"
-    normal=1,
-    //% block="Mirrored"
-    mirrored=0
-}
-
 //% color=#019b9b weight=6 icon="\uf121" block="NeoPix"
+//% groups=["Setup", "Tools", "PixelControl"]
 namespace NeoPix {
-
     /**
      * A Matrix made of ws2812b LEDs
      */
@@ -19,107 +12,72 @@ namespace NeoPix {
         strip: neopixel.Strip
         Width: number
         Height: number
-        /**
-         * Push all changes made to the framebuffer to the display
-         */
-        //% blockId="Matrix_show" block="%matrix| show"
-        //% weight=90
-        //% blockGap=8 parts="NeoPix"
+
+        //%blockId="Matrix_show" block="%matrix| show"
+        //%weight=90 group="Tools"
         show(): void {
             this.strip.show();
         }
-        /**
-         * Set the brightness of the LEDs
-         * @param setpoint -the brightness setpoint, on a scale from 0-255
-         */
-        //% blockId="Matrix_Brightness" block="%matrix set brightness to %setpoint"
-        //% weight=80
-        //% setpoint.defl=32
-        //% blockGap=8 parts="NeoPix"
+        //%blockId="Matrix_Brighness" block="%matrix set brightness to %setpoint"
+        //%weight=80 group="Setup"
+        //%setpoint.defl=32
         Brightness(setpoint: number): void {
             this.strip.setBrightness(setpoint);
         }
-        /**
-         * Empty the entire framebuffer, a call to "show()" must be made to made changes visible
-         */
-        //% blockId="Matrix_clear" block="clear %matrix"
-        //% weight=80
-        //% blockGap=8 parts="NeoPix"
+        //%blockId="Matrix_clear" block="clear %matrix"
+        //%weight=80 group="Tools"
         clear(): void {
             this.strip.clear();
         }
-        /**
-         * Set a single pixel on the display to a specific colour
-         * @param x - the position on the x-axis (left is 0)
-         * @param y - the position on the y-axis (top is 0)
-         * @param colour - the colour to set the pixel to
-         */
-        //% blockId="Matrix_setPixel" block="%matrix| set pixel at x %x| y %y| to colour %colour"
-        //% weight=80
-        //% colour.shadow=neopixel_colors
-        //% blockGap=8 parts="NeoPix"
+
+        //%blockId="Matrix_setPixel" block="%matrix| set pixel at x %x| y %y| to colour %colour"
+        //%weight=80 group="PixelControl"
+        //%colour.shadow=neopixel_colors
         setPixel(x: number, y: number, colour: number): void {
-            if (x < 0 || x > this.Width || y < 0 || y > this.Height) { return } //If the pixel does not fit on screen, do not draw it
+            if (x < 0 || x > this.Width || y < 0 || y > this.Height) { return } //If the pixel does not fit on screen, do not draw it (to avoid aliasing)
             if (!(x % 2)) { this.strip.setPixelColor(y + (x * this.Height), colour); } //Because of the zig-zag formation of the panel all even rows (including 0) are drawn top to bottom
             else { this.strip.setPixelColor((this.Height - y-1) + (x * this.Height), colour); } //While all odd rows are drawn bottom to top
         }
         /**
-         * scroll a string of text on the matrix
+         * scroll text on the matrix
          * @param text the text to scroll 
          * @param speed how fast the text should scroll
          * @param yoffset the y position for the text
          * @param colour the colour in which the text will be displayed
          */
-        //% blockId="Matrix_scrollText" block="%matrix scroll text %text| with speed %speed| on Y postition %yoffset| and colour %colour"
-        //% weight=75
-        //% colour.shadow=neopixel_colors
-        //% speed.min=1 speed.max=2000 speed.defl=1200
-        //% blockGap=8 parts="NeoPix"
+        //%blockId="Matrix_scrollText" block="%matrix scroll text %text| with speed %speed| on Y postition %yoffset| and colour %colour"
+        //%weight=75 group="PixelControl"
+        //%colour.shadow=neopixel_colors
+        //%speed.min=1 speed.max=1024 speed.defl=512
         scrollText(text: string, speed: number, yoffset:number, colour: number): void {
             this.strip.clear();
             for (let Xpos = this.Width; Xpos > -6 * text.length; Xpos--) {//for loop to scroll across the entire matrix
-                for (let letter = 0; letter < text.length; letter++) {//for loop to retrieve all the letters from te text
+                for (let letter = 0; letter < text.length; letter++) {//for loop to retrieve all the letters from the text
                     let bitmap = getLettermap(text.charAt(letter))
-                    this.drawBitmap(bitmap, Xpos + (6 * letter), yoffset, 7, 8, colour, drawDirection.normal)
+                    this.drawBitmap(bitmap, Xpos + (6 * letter), yoffset, 7, 8, colour)
                 }
                 this.strip.show();
                 basic.pause(2000 / speed);
-                this.strip.clear();
+                this.strip.clear();	
             }
+            this.strip.clear();
+            this.strip.show();				
         }
-        /**
-         * draw a monochrome bitmap on the matrix
-         * a '1' will be set to the selected colour, a '0' will be ignored, allowing the bitmaps to be layered
-         * @param bitmap -the bitmap array to display
-         * @param x -the postition on the x-axis (left is 0)
-         * @param y -the position on the y-axis (top is 0)
-         * @param width -the width of the bitmap
-         * @param height -the height of the bitmap
-         * @param colour -the colour to display the bitmap in
-         * @param direction -set this to 0 to mirror the image
-         */
-        //% blockId="Matrix_drawBitmap" block="%matrix draw bitmap %bitmap at x %x y %y | with width %width height %height in colour %colour | draw direction %direction"
-        //% weight=100
-        //% x.defl=0 y.defl=0 width.defl=8 height.defl=8
-        //% colour.shadow=neopixel_colors
-        //% advanced=true
-        //% direction.shadow="drawDirection"
-        drawBitmap(bitmap: number[], x: number, y: number, width: number, height: number, colour: number, direction:drawDirection): void {
-            let byteInLine = Math.floor((width+7)/8) //The amount of bytes per horizontal line in the bitmap
+        //%blockId="Matrix_drawBitmap" block="%matrix draw bitmap %bitmap| at x %x y %y| with width %width height %height| in colour %colour"
+        //%weight=70 group="PixelControl"
+        //% colour.shadow=neopixel.colors
+		//% advanced=true
+        drawBitmap(bitmap: number[], x: number, y: number, width: number, height: number, colour: number, direction:number=1): void {
             for(let Ypos=0; Ypos<height; Ypos++){
-                for(let hzScan=0; hzScan<byteInLine; hzScan++){
-                    for(let bitmask=0; bitmask<8; bitmask++){
-                        if(bitmap[(Ypos*byteInLine)+hzScan] & 0x01<<bitmask){
-                            if(direction){ 
-                                this.setPixel(x+(8*hzScan)-bitmask+7, y+Ypos, colour)
-                            }
-                            else{
-                                this.setPixel(width-(x+(8*hzScan)-bitmask+7)-1, y+Ypos, colour)
-                            }
+                 for(let bitmask=0; bitmask<width; bitmask++){
+                     if(bitmap[Ypos] & 0x0001<<bitmask){
+                        if(direction){ 
+                           this.setPixel(x+width-bitmask, y+Ypos, colour)
                         }
+                        else this.setPixel(x+bitmask, y+Ypos, colour)
+                     }
                     }
                 }
-            }
         }
     }
 
@@ -130,11 +88,11 @@ namespace NeoPix {
      * @param matrixHeight the amount of leds vertically
      * @param mode the format/type of the LED
      */
-    //% blockId="Matrix_Create" block="Matrix at pin %pin|with a width of %matrixWidth |height of %matrixHeight | and with %mode pixeltype"
-    //% weight=100
-    //% matrixWidth.defl=32 matrixHeight.defl=8
-    //% blockSetVariable=matrix
-    //% blockGap=8 parts="NeoPix"
+    //%blockId="Matrix_Create" block="Matrix at pin %pin|with a width of %matrixWidth|height of %matrixheight| and with %mode pixeltype"
+    //%weight=100 blockGap=8 group="Setup"
+    //%parts="NeoPix"
+    //%matrixWidth.defl=32 matrixHeight.defl=8
+    //%blockSetVariable=matrix
     export function create(pin: DigitalPin, matrixWidth: number, matrixHeight: number, mode: NeoPixelMode): Matrix {
         let matrix = new Matrix;
         matrix.strip = neopixel.create(pin, matrixHeight * matrixWidth, mode);
@@ -143,22 +101,20 @@ namespace NeoPix {
 
         return matrix;
     }
-    /**
-     * Take in a string-character and return a bitmap to draw on the display
-     */
+    //Take in a string-character and return a bitmap to draw on the display
     export function getLettermap(char: string): number[] {
         let letterMap: number[] = [0, 0, 0, 0, 0, 0, 0, 0]
         let offset = ((char.charCodeAt(0)) - 32); //Convert the ASCII-Character to it's code to generate the offset in the font-array
         if (offset >= 0) {
             for (let i = 0; i < 8; i++) {
                 //Every character has 8 arguments in the array, so multiply the offset by 8, and then take ne next 8 arguments as the value for the correct bitmap.
-                letterMap[i] = font8x6.getNumber(NumberFormat.UInt8BE, ((offset * 8) + i))
+                letterMap[i] = font8x3.getNumber(NumberFormat.UInt8BE, ((offset * 8) + i))
             }
         }
         return letterMap;
     }
 }
-const font8x6 = hex`
+const font8x3 = hex`
     0000000000000000 1038381010001000 6C6C480000000000 00287C28287C2800
     2038403008701000 64640810204C4C00 2050502054483400 3030200000000000
     1020202020201000 2010101010102000 0028387C38280000 0010107C10100000
