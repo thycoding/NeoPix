@@ -4,8 +4,7 @@
     "description": "NeoPix @THYCoding </>",
     "dependencies": {
         "core": "*",
-        "radio": "*",
-        "neopixel": "github:thycoding/neopixel#92737760dbbcac67d807da1e70c006804eb6f971",
+        "neopixel": "github:kittenbot/pxt-neopixel#v0.6.15",
         "microphone": "*"
     },
     "files": [
