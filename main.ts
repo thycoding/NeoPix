@@ -86,6 +86,8 @@ namespace NeoPix {
                 basic.pause(2000 / speed);
                 this.strip.clear();
             }
+            this.strip.clear();
+            this.strip.show();				
         }
         /**
          * draw a monochrome bitmap on the matrix
